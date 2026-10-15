@@ -7,8 +7,9 @@
 <title>Le défi des 6 différences</title>
 
 <style>
+
 body{
-    font-family: Arial, sans-serif;
+    font-family:Arial,sans-serif;
     background:#f5f5f5;
     text-align:center;
     margin:20px;
@@ -16,6 +17,11 @@ body{
 
 h1{
     color:#e2001a;
+}
+
+.info{
+    margin-bottom:20px;
+    color:#555;
 }
 
 #score{
@@ -33,14 +39,30 @@ h1{
 }
 
 .image-block{
-    max-width:1200px;
+    flex:1;
+    min-width:300px;
 }
 
 .image-block img{
-    max-width:100%;
+    width:100%;
     height:auto;
+    display:block;
     border-radius:10px;
-    box-shadow:0 0 10px rgba(0,0,0,0.2);
+    box-shadow:0 0 10px rgba(0,0,0,.2);
+}
+
+.modified-wrapper{
+    position:relative;
+    display:inline-block;
+}
+
+.found-marker{
+    position:absolute;
+    border:4px solid #00c853;
+    background:rgba(0,200,83,.25);
+    border-radius:50%;
+    display:none;
+    pointer-events:none;
 }
 
 #victory{
@@ -54,13 +76,9 @@ h1{
     font-weight:bold;
 }
 
-.info{
-    margin-bottom:20px;
-    color:#555;
-}
 </style>
-
 </head>
+
 <body>
 
 <h1>🔍 Retrouvez les 6 différences</h1>
@@ -74,15 +92,42 @@ Cliquez sur l'image de droite pour retrouver les 6 différences.
 <div class="container">
 
     <div class="image-block">
-        <img src="https://files.qualifio.com/library/radio_france/images/2026/finaltakeici%201.jpeg" alt="Image originale">
+        <img src="https://files.qualifio.com/library/radio_france/images/2026/finaltakeici%201.jpeg"
+             alt="Image originale">
     </div>
 
     <div class="image-block">
-        <img
-            src="https://files.qualifio.com/library/radio_france/images/2026/finaltakeici%202.jpeg"
-            alt="Image modifiée"
-            usemap="#image-map"
-        >
+
+        <div class="modified-wrapper">
+
+            <img
+                src="https://files.qualifio.com/library/radio_france/images/2026/finaltakeici%202.jpeg"
+                alt="Image modifiée"
+                usemap="#image-map"
+            >
+
+            <!-- MARQUEURS -->
+
+            <div id="m1" class="found-marker"
+                style="left:518px;top:179px;width:54px;height:24px;"></div>
+
+            <div id="m2" class="found-marker"
+                style="left:942px;top:359px;width:129px;height:113px;"></div>
+
+            <div id="m3" class="found-marker"
+                style="left:1072px;top:303px;width:52px;height:36px;"></div>
+
+            <div id="m4" class="found-marker"
+                style="left:738px;top:177px;width:54px;height:73px;"></div>
+
+            <div id="m5" class="found-marker"
+                style="left:426px;top:83px;width:94px;height:76px;"></div>
+
+            <div id="m6" class="found-marker"
+                style="left:193px;top:231px;width:110px;height:95px;"></div>
+
+        </div>
+
     </div>
 
 </div>
@@ -95,277 +140,71 @@ Code secret : <strong>LYNX</strong>
 
 <map name="image-map">
 
-    <area
-        shape="rect"
-        coords="518,179,572,203"
-        alt="stylo"
-        title="Stylo"
-        href="#"
-    >
-
-    <area
-        shape="rect"
-        coords="942,359,1071,472"
-        alt="sac"
-        title="Sac"
-        href="#"
-    >
-
-    <area
-        shape="rect"
-        coords="1072,303,1124,339"
-        alt="tasse"
-        title="Tasse"
-        href="#"
-    >
-
-    <area
-        shape="rect"
-        coords="738,177,792,250"
-        alt="gourde"
-        title="Gourde"
-        href="#"
-    >
-
-    <area
-        shape="rect"
-        coords="426,83,520,159"
-        alt="chapeau"
-        title="Chapeau"
-        href="#"
-    >
-
-    <area
-        shape="rect"
-        coords="193,231,303,326"
-        alt="eventail"
-        title="Éventail"
-        href="#"
-    >
+    <area shape="rect" coords="518,179,572,203" href="#" alt="stylo">
+    <area shape="rect" coords="942,359,1071,472" href="#" alt="sac">
+    <area shape="rect" coords="1072,303,1124,339" href="#" alt="tasse">
+    <area shape="rect" coords="738,177,792,250" href="#" alt="gourde">
+    <area shape="rect" coords="426,83,520,159" href="#" alt="chapeau">
+    <area shape="rect" coords="193,231,303,326" href="#" alt="eventail">
 
 </map>
 
-<script>
-
-let trouvees = 0;
-const total = 6;
-
-document.querySelectorAll("area").forEach(zone => {
-
-    zone.addEventListener("click", function(e){
-
-        e.preventDefault();
-
-        if(this.dataset.trouve){
-            return;
-        }
-
-        this.dataset.trouve = "oui";
-
-        trouvees++;
-
-        document.getElementById("score").innerHTML =
-            trouvees + " / " + total + " trouvées";
-
-        if(trouvees === total){
-
-            document.getElementById("victory").style.display = "block";
-
-            window.scrollTo({
-                top: document.body.scrollHeight,
-                behavior: "smooth"
-            });
-        }
-    });
-
-});
-
-</script>
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Le défi des 6 différences</title>
-
-<style>
-body{
-    font-family: Arial, sans-serif;
-    background:#f5f5f5;
-    text-align:center;
-    margin:20px;
-}
-
-h1{
-    color:#e2001a;
-}
-
-#score{
-    font-size:24px;
-    font-weight:bold;
-    margin:20px 0;
-}
-
-.container{
-    display:flex;
-    justify-content:center;
-    align-items:flex-start;
-    gap:50px;
-    flex-wrap:wrap;
-}
-
-.image-block{
-    max-width:1200px;
-}
-
-.image-block img{
-    max-width:100%;
-    height:auto;
-    border-radius:10px;
-    box-shadow:0 0 10px rgba(0,0,0,0.2);
-}
-
-#victory{
-    display:none;
-    margin-top:30px;
-    background:#00c853;
-    color:white;
-    padding:20px;
-    border-radius:10px;
-    font-size:24px;
-    font-weight:bold;
-}
-
-.info{
-    margin-bottom:20px;
-    color:#555;
-}
-</style>
-
-</head>
-<body>
-
-<h1>🔍 Retrouvez les 6 différences</h1>
-
-<div class="info">
-Cliquez sur l'image de droite pour retrouver les 6 différences.
-</div>
-
-<div id="score">0 / 6 trouvées</div>
-
-<div class="container">
-
-    <div class="image-block">
-        <img src="https://files.qualifio.com/library/radio_france/images/2026/finaltakeici%201.jpeg" alt="Image originale">
-    </div>
-
-    <div class="image-block">
-        <img
-            src="https://files.qualifio.com/library/radio_france/images/2026/finaltakeici%202.jpeg"
-            alt="Image modifiée"
-            usemap="#image-map"
-        >
-    </div>
-
-</div>
-
-<div id="victory">
-🏆 Bravo ! Vous avez trouvé les 6 différences !
-<br><br>
-Code secret : <strong>LYNX</strong>
-</div>
-
-<map name="image-map">
-
-    <area
-        shape="rect"
-        coords="518,179,572,203"
-        alt="stylo"
-        title="Stylo"
-        href="#"
-    >
-
-    <area
-        shape="rect"
-        coords="942,359,1071,472"
-        alt="sac"
-        title="Sac"
-        href="#"
-    >
-
-    <area
-        shape="rect"
-        coords="1072,303,1124,339"
-        alt="tasse"
-        title="Tasse"
-        href="#"
-    >
-
-    <area
-        shape="rect"
-        coords="738,177,792,250"
-        alt="gourde"
-        title="Gourde"
-        href="#"
-    >
-
-    <area
-        shape="rect"
-        coords="426,83,520,159"
-        alt="chapeau"
-        title="Chapeau"
-        href="#"
-    >
-
-    <area
-        shape="rect"
-        coords="193,231,303,326"
-        alt="eventail"
-        title="Éventail"
-        href="#"
-    >
-
-</map>
+<script src="https://cdn.jsdelivr.net/npm/image-map-resizer@1.0.10/js/imageMapResizer.min.js"></script>
 
 <script>
 
-let trouvees = 0;
-const total = 6;
+window.onload = function() {
 
-document.querySelectorAll("area").forEach(zone => {
+    imageMapResize();
 
-    zone.addEventListener("click", function(e){
+    let trouvees = 0;
+    const total = 6;
 
-        e.preventDefault();
+    const marqueurs = [
+        "m1",
+        "m2",
+        "m3",
+        "m4",
+        "m5",
+        "m6"
+    ];
 
-        if(this.dataset.trouve){
-            return;
-        }
+    document.querySelectorAll("area").forEach((zone,index) => {
 
-        this.dataset.trouve = "oui";
+        zone.addEventListener("click", function(e){
 
-        trouvees++;
+            e.preventDefault();
 
-        document.getElementById("score").innerHTML =
-            trouvees + " / " + total + " trouvées";
+            if(this.dataset.trouve){
+                return;
+            }
 
-        if(trouvees === total){
+            this.dataset.trouve = "oui";
 
-            document.getElementById("victory").style.display = "block";
+            document.getElementById(marqueurs[index]).style.display = "block";
 
-            window.scrollTo({
-                top: document.body.scrollHeight,
-                behavior: "smooth"
-            });
-        }
+            trouvees++;
+
+            document.getElementById("score").innerHTML =
+                trouvees + " / " + total + " trouvées";
+
+            if(trouvees === total){
+
+                document.getElementById("victory").style.display = "block";
+
+                window.scrollTo({
+                    top: document.body.scrollHeight,
+                    behavior: "smooth"
+                });
+
+            }
+        });
+
     });
 
-});
+};
 
 </script>
 
-</body>
-</html>
 </body>
 </html>
