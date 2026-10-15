@@ -181,6 +181,191 @@ document.querySelectorAll("area").forEach(zone => {
 });
 
 </script>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<title>Le défi des 6 différences</title>
+
+<style>
+body{
+    font-family: Arial, sans-serif;
+    background:#f5f5f5;
+    text-align:center;
+    margin:20px;
+}
+
+h1{
+    color:#e2001a;
+}
+
+#score{
+    font-size:24px;
+    font-weight:bold;
+    margin:20px 0;
+}
+
+.container{
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+    gap:50px;
+    flex-wrap:wrap;
+}
+
+.image-block{
+    max-width:1200px;
+}
+
+.image-block img{
+    max-width:100%;
+    height:auto;
+    border-radius:10px;
+    box-shadow:0 0 10px rgba(0,0,0,0.2);
+}
+
+#victory{
+    display:none;
+    margin-top:30px;
+    background:#00c853;
+    color:white;
+    padding:20px;
+    border-radius:10px;
+    font-size:24px;
+    font-weight:bold;
+}
+
+.info{
+    margin-bottom:20px;
+    color:#555;
+}
+</style>
+
+</head>
+<body>
+
+<h1>🔍 Retrouvez les 6 différences</h1>
+
+<div class="info">
+Cliquez sur l'image de droite pour retrouver les 6 différences.
+</div>
+
+<div id="score">0 / 6 trouvées</div>
+
+<div class="container">
+
+    <div class="image-block">
+        <img src="https://files.qualifio.com/library/radio_france/images/2026/finaltakeici%201.jpeg" alt="Image originale">
+    </div>
+
+    <div class="image-block">
+        <img
+            src="https://files.qualifio.com/library/radio_france/images/2026/finaltakeici%202.jpeg"
+            alt="Image modifiée"
+            usemap="#image-map"
+        >
+    </div>
+
+</div>
+
+<div id="victory">
+🏆 Bravo ! Vous avez trouvé les 6 différences !
+<br><br>
+Code secret : <strong>LYNX</strong>
+</div>
+
+<map name="image-map">
+
+    <area
+        shape="rect"
+        coords="518,179,572,203"
+        alt="stylo"
+        title="Stylo"
+        href="#"
+    >
+
+    <area
+        shape="rect"
+        coords="942,359,1071,472"
+        alt="sac"
+        title="Sac"
+        href="#"
+    >
+
+    <area
+        shape="rect"
+        coords="1072,303,1124,339"
+        alt="tasse"
+        title="Tasse"
+        href="#"
+    >
+
+    <area
+        shape="rect"
+        coords="738,177,792,250"
+        alt="gourde"
+        title="Gourde"
+        href="#"
+    >
+
+    <area
+        shape="rect"
+        coords="426,83,520,159"
+        alt="chapeau"
+        title="Chapeau"
+        href="#"
+    >
+
+    <area
+        shape="rect"
+        coords="193,231,303,326"
+        alt="eventail"
+        title="Éventail"
+        href="#"
+    >
+
+</map>
+
+<script>
+
+let trouvees = 0;
+const total = 6;
+
+document.querySelectorAll("area").forEach(zone => {
+
+    zone.addEventListener("click", function(e){
+
+        e.preventDefault();
+
+        if(this.dataset.trouve){
+            return;
+        }
+
+        this.dataset.trouve = "oui";
+
+        trouvees++;
+
+        document.getElementById("score").innerHTML =
+            trouvees + " / " + total + " trouvées";
+
+        if(trouvees === total){
+
+            document.getElementById("victory").style.display = "block";
+
+            window.scrollTo({
+                top: document.body.scrollHeight,
+                behavior: "smooth"
+            });
+        }
+    });
+
+});
+
+</script>
+
+</body>
+</html>
 </body>
 </html>
