@@ -59,224 +59,46 @@ h1{
     pointer-events:none;
 }
 
-#victory{
-    display:none;
-    margin-top:30px;
-    padding:20px;
-    background:#00c853;
-    color:white;
-    border-radius:10px;
-    font-size:24px;
-}
-
 .info{
     color:#555;
     margin-bottom:20px;
 }
 
-</style>
-</head>
-
-<body>
-
-<h1>🔍 Retrouvez les 6 différences</h1>
-
-<div class="info">
-Cliquez sur les différences dans l'image de droite.
-</div>
-
-<div id="score">0 / 6 trouvées</div>
-
-<div class="container">
-
-    <div class="image-container">
-        <img
-        src="https://files.qualifio.com/library/radio_france/images/2026/finaltakeici%201.jpeg"
-        alt="">
-    </div>
-
-    <div class="image-container" id="jeu">
-
-        <img
-        id="imageModifiee"
-        src="https://files.qualifio.com/library/radio_france/images/2026/finaltakeici%202.jpeg"
-        alt="">
-
-    </div>
-
-</div>
-
-<div id="victory">
-🏆 Bravo ! Vous avez trouvé les 6 différences !
-</div>
-
-<script>
-
-const largeurReference = 1360;
-const hauteurReference = 768;
-
-const differences = [
-
-{
-nom:"Stylo",
-x1:518,
-y1:179,
-x2:572,
-y2:203
-},
-
-{
-nom:"Sac",
-x1:942,
-y1:359,
-x2:1071,
-y2:472
-},
-
-{
-nom:"Tasse",
-x1:1072,
-y1:303,
-x2:1124,
-y2:339
-},
-
-{
-nom:"Gourde",
-x1:738,
-y1:177,
-x2:792,
-y2:250
-},
-
-{
-nom:"Chapeau",
-x1:426,
-y1:83,
-x2:520,
-y2:159
-},
-
-{
-nom:"Eventail",
-x1:193,
-y1:231,
-x2:303,
-y2:326
+button{
+    padding:10px 15px;
+    margin:5px;
+    cursor:pointer;
+    border:none;
+    border-radius:6px;
+    background:#e2001a;
+    color:white;
+    font-size:14px;
 }
 
-];
-
-let trouvees = 0;
-
-const zoneJeu = document.getElementById("jeu");
-
-function creerZones(){
-
-    const image = document.getElementById("imageModifiee");
-
-    const largeurAffichee = image.clientWidth;
-    const hauteurAffichee = image.clientHeight;
-
-    document
-    .querySelectorAll(".hotspot,.marker")
-    .forEach(e => e.remove());
-
-    differences.forEach((d,index)=>{
-
-        const left =
-        (d.x1 / largeurReference) * largeurAffichee;
-
-        const top =
-        (d.y1 / hauteurReference) * hauteurAffichee;
-
-        const width =
-        ((d.x2-d.x1)/largeurReference)
-        * largeurAffichee;
-
-        const height =
-        ((d.y2-d.y1)/hauteurReference)
-        * hauteurAffichee;
-
-        const hotspot =
-        document.createElement("div");
-
-        hotspot.className="hotspot";
-
-        hotspot.style.left=left+"px";
-        hotspot.style.top=top+"px";
-        hotspot.style.width=width+"px";
-        hotspot.style.height=height+"px";
-
-        const marker =
-        document.createElement("div");
-
-        marker.className="marker";
-
-        marker.style.left=(left-5)+"px";
-        marker.style.top=(top-5)+"px";
-        marker.style.width=(width+10)+"px";
-        marker.style.height=(height+10)+"px";
-
-        marker.id="marker"+index;
-
-        hotspot.addEventListener("click",()=>{
-
-            if(hotspot.dataset.trouve)
-                return;
-
-            hotspot.dataset.trouve=true;
-
-            marker.style.display="block";
-
-            trouvees++;
-
-            document.getElementById("score")
-            .innerText=
-            trouvees+" / 6 trouvées";
-
-            if(trouvees===6){
-
-                document
-                .getElementById("victory")
-                .style.display="block";
-
-                window.scrollTo({
-                    top:document.body.scrollHeight,
-                    behavior:"smooth"
-                });
-
-            }
-
-        });
-
-        zoneJeu.appendChild(hotspot);
-        zoneJeu.appendChild(marker);
-
-    });
-
+button:hover{
+    opacity:0.9;
 }
 
-window.addEventListener("load",()=>{
+#hintText{
+    margin-top:10px;
+    color:#666;
+    font-style:italic;
+}
 
-    const img =
-    document.getElementById("imageModifiee");
+#victory{
+    display:none;
+    margin-top:30px;
+    padding:30px;
+    background:white;
+    border-radius:12px;
+    box-shadow:0 0 15px rgba(0,0,0,.15);
+}
 
-    if(img.complete){
-
-        creerZones();
-
-    }else{
-
-        img.onload=creerZones;
-
-    }
-
-});
-
-window.addEventListener("resize",creerZones);
-
-</script>
-
-</body>
-</html>
+.cta{
+    display:inline-block;
+    margin-top:20px;
+    padding:15px 25px;
+    background:#e2001a;
+    color:white;
+    text-decoration:none;
+    border-radius:8px
