@@ -102,3 +102,289 @@ button:hover{
     color:white;
     text-decoration:none;
     border-radius:8px
+    font-weight:bold;
+}
+
+.cta:hover{
+    opacity:0.9;
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>🔍 Retrouvez les 6 différences</h1>
+
+<div class="info">
+Cliquez sur les différences dans l'image de droite.
+</div>
+
+<div id="score">0 / 6 trouvées</div>
+
+<div style="margin-bottom:20px;">
+    <button id="hintBtn">💡 Indice</button>
+    <button id="helpBtn">😅 Je bloque</button>
+</div>
+
+<div id="hintText"></div>
+
+<div class="container">
+
+    <div class="image-container">
+        <img
+        src="https://files.qualifio.com/library/radio_france/images/2026/finaltakeici%201.jpeg"
+        alt="">
+    </div>
+
+    <div class="image-container" id="jeu">
+
+        <img
+        id="imageModifiee"
+        src="https://files.qualifio.com/library/radio_france/images/2026/finaltakeici%202.jpeg"
+        alt="">
+
+    </div>
+
+</div>
+
+<div id="victory">
+
+    <h2>🏆 Bravo !</h2>
+
+    <p>
+        Vous avez retrouvé les 6 différences.
+    </p>
+
+    <p>
+        Cliquez ci-dessous pour participer au tirage au sort.
+    </p>
+
+    <a
+        class="cta"
+        href="URL_DE_TA_CAMPAGNE_QUALIFIO"
+        target="_blank"
+    >
+        🎁 Participer au tirage au sort
+    </a>
+
+</div>
+
+<script>
+
+const largeurReference = 1360;
+const hauteurReference = 768;
+
+const differences = [
+
+{
+nom:"Stylo",
+x1:518,
+y1:179,
+x2:572,
+y2:203
+},
+
+{
+nom:"Sac",
+x1:942,
+y1:359,
+x2:1071,
+y2:472
+},
+
+{
+nom:"Tasse",
+x1:1072,
+y1:303,
+x2:1124,
+y2:339
+},
+
+{
+nom:"Gourde",
+x1:738,
+y1:177,
+x2:792,
+y2:250
+},
+
+{
+nom:"Chapeau",
+x1:426,
+y1:83,
+x2:520,
+y2:159
+},
+
+{
+nom:"Eventail",
+x1:193,
+y1:231,
+x2:303,
+y2:326
+}
+
+];
+
+const indices = [
+
+"Regardez autour du visage.",
+"Un objet d'écriture a disparu.",
+"Cherchez près du sac.",
+"Regardez un accessoire de boisson.",
+"Un détail vestimentaire a changé.",
+"Inspectez le coin inférieur gauche."
+
+];
+
+let trouvees = 0;
+let indiceActuel = 0;
+
+const zoneJeu = document.getElementById("jeu");
+
+function creerZones(){
+
+    const image = document.getElementById("imageModifiee");
+
+    const largeurAffichee = image.clientWidth;
+    const hauteurAffichee = image.clientHeight;
+
+    document
+    .querySelectorAll(".hotspot,.marker")
+    .forEach(e => e.remove());
+
+    differences.forEach((d,index)=>{
+
+        const left =
+        (d.x1 / largeurReference) * largeurAffichee;
+
+        const top =
+        (d.y1 / hauteurReference) * hauteurAffichee;
+
+        const width =
+        ((d.x2-d.x1)/largeurReference)
+        * largeurAffichee;
+
+        const height =
+        ((d.y2-d.y1)/hauteurReference)
+        * hauteurAffichee;
+
+        const hotspot =
+        document.createElement("div");
+
+        hotspot.className="hotspot";
+
+        hotspot.style.left=left+"px";
+        hotspot.style.top=top+"px";
+        hotspot.style.width=width+"px";
+        hotspot.style.height=height+"px";
+
+        const marker =
+        document.createElement("div");
+
+        marker.className="marker";
+
+        marker.style.left=(left-5)+"px";
+        marker.style.top=(top-5)+"px";
+        marker.style.width=(width+10)+"px";
+        marker.style.height=(height+10)+"px";
+
+        marker.id="marker"+index;
+
+        hotspot.addEventListener("click",()=>{
+
+            if(hotspot.dataset.trouve)
+                return;
+
+            hotspot.dataset.trouve=true;
+
+            marker.style.display="block";
+
+            trouvees++;
+
+            document.getElementById("score")
+            .innerText=
+            trouvees+" / 6 trouvées";
+
+            if(trouvees===6){
+
+                document
+                .getElementById("victory")
+                .style.display="block";
+
+                document
+                .getElementById("hintBtn")
+                .style.display="none";
+
+                document
+                .getElementById("helpBtn")
+                .style.display="none";
+
+                window.scrollTo({
+                    top:document.body.scrollHeight,
+                    behavior:"smooth"
+                });
+
+            }
+
+        });
+
+        zoneJeu.appendChild(hotspot);
+        zoneJeu.appendChild(marker);
+
+    });
+
+}
+
+document
+.getElementById("hintBtn")
+.addEventListener("click",()=>{
+
+    if(indiceActuel >= indices.length)
+        return;
+
+    document.getElementById("hintText").innerText =
+    indices[indiceActuel];
+
+    indiceActuel++;
+
+});
+
+document
+.getElementById("helpBtn")
+.addEventListener("click",()=>{
+
+    const restants =
+    document.querySelectorAll(".hotspot:not([data-trouve])");
+
+    if(restants.length===0)
+        return;
+
+    restants[0].click();
+
+});
+
+window.addEventListener("load",()=>{
+
+    const img =
+    document.getElementById("imageModifiee");
+
+    if(img.complete){
+
+        creerZones();
+
+    }else{
+
+        img.onload=creerZones;
+
+    }
+
+});
+
+window.addEventListener("resize",creerZones);
+
+</script>
+
+</body>
+</html>
