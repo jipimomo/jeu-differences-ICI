@@ -108,7 +108,7 @@ button:hover{
 .cta:hover{
     opacity:0.9;
 }
-@media (max-width: 768px) {
+@media (max-width:768px){
 
     .container{
         flex-direction:column;
@@ -118,6 +118,14 @@ button:hover{
     .image-container{
         width:100%;
         max-width:100%;
+    }
+
+    h1{
+        font-size:26px;
+    }
+
+    #score{
+        font-size:20px;
     }
 
 }
@@ -174,7 +182,7 @@ Cliquez sur les différences dans l'image de droite.
 
     <a
         class="cta"
-        href="URL_DE_TA_CAMPAGNE_QUALIFIO"
+        href="https://radiofrance.qualifioapp.com/20/A41F4660-9AEB-4EE4-BA36-8E713082B9B9/_awfaf8/v1.cfm?cfid=f95e94ca-b36a-405f-acba-947d049157f9&uk=QJ6DF37R6RA&page=1&cftoken=0"
         target="_blank"
     >
         🎁 Participer au tirage au sort
@@ -430,6 +438,44 @@ window.addEventListener(
     resizeIframe
 );
 </script>
+<script>
 
+function hauteurIframe() {
+
+    const hauteur = Math.max(
+        document.body.scrollHeight,
+        document.documentElement.scrollHeight
+    );
+
+    if(window.parent !== window){
+
+        window.parent.postMessage(
+            {
+                type: "resize-game",
+                height: hauteur
+            },
+            "*"
+        );
+
+    }
+
+}
+
+window.addEventListener("load", hauteurIframe);
+window.addEventListener("resize", hauteurIframe);
+
+const observer =
+new MutationObserver(hauteurIframe);
+
+observer.observe(
+    document.body,
+    {
+        childList:true,
+        subtree:true,
+        attributes:true
+    }
+);
+
+</script>
 </body>
 </html>
