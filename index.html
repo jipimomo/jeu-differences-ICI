@@ -35,7 +35,7 @@ h1{
 .image-container{
     position:relative;
     width:650px;
-    max-width:100%;
+    max-width:95vw;
 }
 
 .image-container img{
@@ -287,10 +287,16 @@ function creerZones(){
 
         hotspot.className="hotspot";
 
-        hotspot.style.left=left+"px";
-        hotspot.style.top=top+"px";
-        hotspot.style.width=width+"px";
-        hotspot.style.height=height+"px";
+      const marge = 20;
+
+hotspot.style.left=(left-marge)+"px";
+hotspot.style.top=(top-marge)+"px";
+
+hotspot.style.width=
+(width + marge*2)+"px";
+
+hotspot.style.height=
+(height + marge*2)+"px";
 
         const marker =
         document.createElement("div");
@@ -333,10 +339,11 @@ function creerZones(){
                 .getElementById("helpBtn")
                 .style.display="none";
 
-                window.scrollTo({
-                    top:document.body.scrollHeight,
-                    behavior:"smooth"
-                });
+               document
+.getElementById("victory")
+.scrollIntoView({
+    behavior:"smooth"
+});
 
             }
 
@@ -395,7 +402,33 @@ window.addEventListener("load",()=>{
 });
 
 window.addEventListener("resize",creerZones);
+function resizeIframe(){
 
+    if(window.parent !== window){
+
+        const hauteur =
+        document.documentElement.scrollHeight;
+
+        window.parent.postMessage(
+            {
+                iframeHeight: hauteur
+            },
+            "*"
+        );
+
+    }
+
+}
+
+window.addEventListener(
+    "load",
+    resizeIframe
+);
+
+window.addEventListener(
+    "resize",
+    resizeIframe
+);
 </script>
 
 </body>
