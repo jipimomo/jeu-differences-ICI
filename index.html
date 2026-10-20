@@ -48,8 +48,9 @@ h1{
 .hotspot{
     position:absolute;
     cursor:pointer;
-    border:2px solid red;
-    background:rgba(255,0,0,.2);
+    border:5px solid blue;
+    background:rgba(0,0,255,.4);
+    z-index:9999;
 }
 
 .marker{
@@ -282,6 +283,11 @@ function creerZones(){
 
     const largeurAffichee = image.clientWidth;
     const hauteurAffichee = image.clientHeight;
+    console.log(
+  "Image :",
+  largeurAffichee,
+  hauteurAffichee
+);
 
     document
     .querySelectorAll(".hotspot,.marker")
