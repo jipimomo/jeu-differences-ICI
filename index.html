@@ -156,13 +156,14 @@ button:hover{
 <div class="container">
 
     <div class="image-container">
+         <h3>📷 Image de référence</h3>
         <img
         src="https://files.qualifio.com/library/radio_france/images/2026/finaltakeici%201.jpeg"
         alt="">
     </div>
 
     <div class="image-container" id="jeu">
-
+    <h3>🎯 Cliquez sur cette image</h3>
         <img
         id="imageModifiee"
         src="https://files.qualifio.com/library/radio_france/images/2026/finaltakeici%202.jpeg"
@@ -207,6 +208,7 @@ x1:518,
 y1:179,
 x2:572,
 y2:203
+marge:5
 },
 
 {
@@ -239,6 +241,7 @@ x1:426,
 y1:83,
 x2:520,
 y2:159
+marge:5
 },
 
 {
@@ -299,7 +302,7 @@ function creerZones(){
 
         hotspot.className="hotspot";
 
-      const marge = 20;
+      const marge = d.marge || 20;
 
 hotspot.style.left=(left-marge)+"px";
 hotspot.style.top=(top-marge)+"px";
