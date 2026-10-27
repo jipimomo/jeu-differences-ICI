@@ -44,6 +44,9 @@ h1{
     border-radius:10px;
     box-shadow:0 0 10px rgba(0,0,0,.2);
 }
+    .image-wrapper{
+    position:relative;
+}
 
 .hotspot{
     position:absolute;
@@ -166,14 +169,16 @@ button:hover{
         alt="">
     </div>
 
-    <div class="image-container" id="jeu">
+   <div class="image-container" id="jeu">
     <h3>🎯 Cliquez sur cette image</h3>
+
+    <div class="image-wrapper" id="zoneJeu">
         <img
         id="imageModifiee"
         src="https://files.qualifio.com/library/radio_france/images/2026/finaltakeici%202.jpeg"
         alt="">
-
     </div>
+</div>
 
 </div>
 
@@ -275,7 +280,7 @@ const indices = [
 let trouvees = 0;
 let indiceActuel = 0;
 
-const zoneJeu = document.getElementById("jeu");
+const zoneJeu = document.getElementById("zoneJeu");
 
 function creerZones(){
 
@@ -494,7 +499,17 @@ observer.observe(
         attributes:true
     }
 );
+const calib = document.createElement("div");
+calib.style.cssText = "position:fixed;bottom:10px;left:10px;background:#000;color:#fff;padding:8px 12px;border-radius:6px;font-size:14px;z-index:9999";
+document.body.appendChild(calib);
 
+zoneJeu.addEventListener("click", e => {
+    const img = document.getElementById("imageModifiee");
+    const r = img.getBoundingClientRect();
+    const x = Math.round((e.clientX - r.left) / r.width * largeurReference);
+    const y = Math.round((e.clientY - r.top) / r.height * hauteurReference);
+    calib.textContent = "x: " + x + "  y: " + y;
+});
 </script>
 </body>
 </html>
