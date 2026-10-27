@@ -3,10 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Retrouvez les 6 différences</title>
 
 <style>
+:root{
+    --rouge:#e2001a;
+    --vert:#00c853;
+    --orange:#ff9800;
+}
+
+*{ box-sizing:border-box; }
 
 body{
     font-family:Arial,sans-serif;
@@ -14,15 +20,56 @@ body{
     text-align:center;
     margin:20px;
 }
- 
+
 h1{
-    color:#e2001a;
+    color:var(--rouge);
+}
+
+h3{
+    margin:10px 0;
+}
+
+.info{
+    color:#555;
+    margin-bottom:20px;
+    line-height:1.5;
 }
 
 #score{
     font-size:24px;
     font-weight:bold;
     margin:20px 0;
+}
+
+.actions{
+    margin-bottom:20px;
+}
+
+button{
+    padding:10px 15px;
+    margin:5px;
+    cursor:pointer;
+    border:none;
+    border-radius:6px;
+    background:var(--rouge);
+    color:#fff;
+    font-size:14px;
+    touch-action:manipulation;
+}
+
+button:hover{ opacity:.9; }
+
+button:focus-visible,
+.cta:focus-visible{
+    outline:3px solid #000;
+    outline-offset:2px;
+}
+
+#hintText{
+    min-height:1.4em;
+    margin-bottom:10px;
+    color:#666;
+    font-style:italic;
 }
 
 .container{
@@ -33,70 +80,84 @@ h1{
 }
 
 .image-container{
-    position:relative;
     width:650px;
     max-width:95vw;
 }
 
-.image-container img{
+/* Le wrapper est l'origine exacte des hotspots : il ne contient que l'image */
+.image-wrapper{
+    position:relative;
+    -webkit-tap-highlight-color:transparent;
+    user-select:none;
+}
+
+.image-wrapper img{
     width:100%;
     display:block;
     border-radius:10px;
     box-shadow:0 0 10px rgba(0,0,0,.2);
 }
-    .image-wrapper{
-    position:relative;
-}
 
+#zoneJeu{ cursor:crosshair; }
+
+/* Zones cliquables : invisibles pour le joueur */
 .hotspot{
     position:absolute;
-    cursor:pointer;
-    z-index:1000;
-    border:2px solid red;
-background:rgba(255,0,0,.2);
+    z-index:10;
 }
 
-
+/* Marqueur de différence trouvée / d'aide */
 .marker{
     position:absolute;
-    border:4px solid #00c853;
+    display:none;
+    border:4px solid var(--vert);
     background:rgba(0,200,83,.25);
     border-radius:50%;
-    display:none;
     pointer-events:none;
+    z-index:20;
 }
 
-.info{
-    color:#555;
-    margin-bottom:20px;
+.marker.trouve{ display:block; }
+
+.marker.aide{
+    display:block;
+    border-color:var(--orange);
+    background:rgba(255,152,0,.25);
+    animation:pulse 1s ease-in-out infinite;
 }
 
-button{
-    padding:10px 15px;
-    margin:5px;
+@keyframes pulse{
+    0%,100%{ transform:scale(1); }
+    50%{ transform:scale(1.15); }
+}
+
+/* Mode calibration (CONFIG.DEBUG = true) */
+body.debug .hotspot{
+    border:2px solid red;
+    background:rgba(255,0,0,.2);
     cursor:pointer;
-    border:none;
+}
+
+#calibration{
+    display:none;
+    position:fixed;
+    bottom:10px;
+    left:10px;
+    background:#000;
+    color:#fff;
+    padding:8px 12px;
     border-radius:6px;
-    background:#e2001a;
-    color:white;
     font-size:14px;
+    z-index:9999;
 }
 
-button:hover{
-    opacity:0.9;
-}
-
-#hintText{
-    margin-top:10px;
-    color:#666;
-    font-style:italic;
-}
+body.debug #calibration{ display:block; }
 
 #victory{
     display:none;
     margin-top:30px;
     padding:30px;
-    background:white;
+    background:#fff;
     border-radius:12px;
     box-shadow:0 0 15px rgba(0,0,0,.15);
 }
@@ -105,18 +166,16 @@ button:hover{
     display:inline-block;
     margin-top:20px;
     padding:15px 25px;
-    background:#e2001a;
-    color:white;
+    background:var(--rouge);
+    color:#fff;
     text-decoration:none;
     border-radius:8px;
     font-weight:bold;
 }
 
-.cta:hover{
-    opacity:0.9;
-}
-@media (max-width:768px){
+.cta:hover{ opacity:.9; }
 
+@media (max-width:768px){
     .container{
         flex-direction:column;
         align-items:center;
@@ -127,14 +186,12 @@ button:hover{
         max-width:100%;
     }
 
-    h1{
-        font-size:26px;
-    }
+    h1{ font-size:26px; }
+    #score{ font-size:20px; }
+}
 
-    #score{
-        font-size:20px;
-    }
-
+@media (prefers-reduced-motion:reduce){
+    .marker.aide{ animation:none; }
 }
 </style>
 </head>
@@ -144,372 +201,279 @@ button:hover{
 <h1>🔍 Retrouvez les 6 différences</h1>
 
 <div class="info">
-🔎 Comparez les deux images pour retrouver les 6 différences.<br><br>
-
-✅ Cliquez uniquement sur l'image contenant les objets pour valider vos découvertes.<br>
-
-📱 Sur smartphone, cette image se trouve sous l'image de référence.
+    🔎 Comparez les deux images pour retrouver les 6 différences.<br><br>
+    ✅ Cliquez uniquement sur l'image contenant les objets pour valider vos découvertes.<br>
+    📱 Sur smartphone, cette image se trouve sous l'image de référence.
 </div>
 
-<div id="score">0 / 6 trouvées</div>
+<div id="score" aria-live="polite">0 / 6 trouvées</div>
 
-<div style="margin-bottom:20px;">
-    <button id="hintBtn">💡 Indice</button>
-    <button id="helpBtn">😅 Je bloque</button>
+<div class="actions">
+    <button id="hintBtn" type="button">💡 Indice</button>
+    <button id="helpBtn" type="button">😅 Je bloque</button>
 </div>
 
-<div id="hintText"></div>
+<div id="hintText" aria-live="polite"></div>
 
 <div class="container">
 
     <div class="image-container">
-         <h3>📷 Image de référence</h3>
-        <img
-        src="https://files.qualifio.com/library/radio_france/images/2026/finaltakeici%201.jpeg"
-        alt="">
+        <h3>📷 Image de référence</h3>
+        <div class="image-wrapper">
+            <img
+                src="https://files.qualifio.com/library/radio_france/images/2026/finaltakeici%201.jpeg"
+                alt="Image de référence du jeu des différences">
+        </div>
     </div>
 
-   <div class="image-container" id="jeu">
-    <h3>🎯 Cliquez sur cette image</h3>
-
-    <div class="image-wrapper" id="zoneJeu">
-        <img
-        id="imageModifiee"
-        src="https://files.qualifio.com/library/radio_france/images/2026/finaltakeici%202.jpeg"
-        alt="">
+    <div class="image-container">
+        <h3>🎯 Cliquez sur cette image</h3>
+        <div class="image-wrapper" id="zoneJeu">
+            <img
+                id="imageModifiee"
+                src="https://files.qualifio.com/library/radio_france/images/2026/finaltakeici%202.jpeg"
+                alt="Image à explorer : cliquez sur les différences avec l'image de référence">
+        </div>
     </div>
-</div>
 
 </div>
 
 <div id="victory">
-
     <h2>🏆 Bravo !</h2>
-
-    <p>
-        Vous avez retrouvé les 6 différences.
-    </p>
-
-    <p>
-        Cliquez ci-dessous pour participer au tirage au sort.
-    </p>
+    <p>Vous avez retrouvé les 6 différences.</p>
+    <p>Cliquez ci-dessous pour participer au tirage au sort.</p>
 
     <a
         class="cta"
         href="https://radiofrance.qualifioapp.com/20/A41F4660-9AEB-4EE4-BA36-8E713082B9B9/_awfaf8/v1.cfm?cfid=f95e94ca-b36a-405f-acba-947d049157f9&uk=QJ6DF37R6RA&page=1&cftoken=0"
         target="_blank"
-    >
+        rel="noopener">
         🎁 Participer au tirage au sort
     </a>
-
 </div>
 
+<div id="calibration"></div>
+
 <script>
+/* ============================================================
+   CONFIGURATION
+   ============================================================ */
+const CONFIG = {
+    // Dimensions de l'image dans lesquelles les coordonnées ci-dessous sont exprimées
+    LARGEUR_REF: 1360,
+    HAUTEUR_REF: 768,
 
-const largeurReference = 1360;
-const hauteurReference = 768;
+    // true : affiche les zones cliquables et les coordonnées au clic (calibration)
+    DEBUG: false,
 
+    // false : « Je bloque » fait clignoter la zone sans la valider
+    // true  : « Je bloque » valide la différence (ancien comportement)
+    AIDE_VALIDE_LA_DIFFERENCE: false,
+
+    // Durée d'affichage de l'aide (ms)
+    DUREE_AIDE: 2500
+};
+
+/* ============================================================
+   DIFFÉRENCES
+   x1,y1 = coin haut-gauche / x2,y2 = coin bas-droit
+   marge = zone de tolérance autour de la différence (en pixels affichés)
+   ============================================================ */
 const differences = [
+    { nom:"Stylo",    x1:530,  y1:180, x2:565,  y2:200, marge:2,
+      indice:"Un objet d'écriture a disparu." },
 
-{
-nom:"Stylo",
-x1:530,
-y1:180,
-x2:565,
-y2:200,
-marge:2
-},
+    { nom:"Sac",      x1:942,  y1:359, x2:1071, y2:472, marge:10,
+      indice:"Regardez le sac, en bas à droite." },
 
-{
-nom:"Sac",
-x1:942,
-y1:359,
-x2:1071,
-y2:472,
-marge:10
-},
+    { nom:"Tasse",    x1:1072, y1:303, x2:1124, y2:339, marge:8,
+      indice:"Un récipient pour boire a changé, sur la droite." },
 
-{
-nom:"Tasse",
-x1:1072,
-y1:303,
-x2:1124,
-y2:339,
-marge:8
-},
+    { nom:"Gourde",   x1:738,  y1:177, x2:792,  y2:250, marge:8,
+      indice:"Regardez un accessoire de boisson, vers le centre." },
 
-{
-nom:"Gourde",
-x1:738,
-y1:177,
-x2:792,
-y2:250,
-marge:8
-},
+    { nom:"Chapeau",  x1:430,  y1:85,  x2:515,  y2:150, marge:3,
+      indice:"Un détail vestimentaire a changé." },
 
-{
-nom:"Chapeau",
-x1:430,
-y1:85,
-x2:515,
-y2:150,
-marge:3
-},
+    { nom:"Eventail", x1:193,  y1:231, x2:303,  y2:326, marge:8,
+      indice:"Regardez sur la gauche de l'image." }
+];
 
-{
-nom:"Eventail",
-x1:193,
-y1:231,
-x2:303,
-y2:326,
-marge:8
+/* ============================================================
+   ÉLÉMENTS ET ÉTAT
+   ============================================================ */
+const zoneJeu   = document.getElementById("zoneJeu");
+const image     = document.getElementById("imageModifiee");
+const scoreEl   = document.getElementById("score");
+const hintBtn   = document.getElementById("hintBtn");
+const helpBtn   = document.getElementById("helpBtn");
+const hintText  = document.getElementById("hintText");
+const victoryEl = document.getElementById("victory");
+
+if (CONFIG.DEBUG) document.body.classList.add("debug");
+
+const total = differences.length;
+
+function nbTrouvees(){
+    return differences.filter(d => d.trouve).length;
 }
 
-];
-const indices = [
+function premiereRestante(){
+    return differences.find(d => !d.trouve);
+}
 
-"Regardez autour du visage.",
-"Un objet d'écriture a disparu.",
-"Cherchez près du sac.",
-"Regardez un accessoire de boisson.",
-"Un détail vestimentaire a changé.",
-"Inspectez le coin inférieur gauche."
-
-];
-
-let trouvees = 0;
-let indiceActuel = 0;
-
-const zoneJeu = document.getElementById("zoneJeu");
-
+/* ============================================================
+   CRÉATION DES ZONES (une seule fois)
+   ============================================================ */
 function creerZones(){
+    differences.forEach(d => {
+        d.trouve = false;
 
-    const image = document.getElementById("imageModifiee");
+        d.hotspot = document.createElement("div");
+        d.hotspot.className = "hotspot";
+        d.hotspot.addEventListener("click", () => valider(d));
 
-    const largeurAffichee = image.clientWidth;
-    const hauteurAffichee = image.clientHeight;
-    console.log(
-  "Image :",
-  largeurAffichee,
-  hauteurAffichee
-);
+        d.marker = document.createElement("div");
+        d.marker.className = "marker";
 
-    document
-    .querySelectorAll(".hotspot,.marker")
-    .forEach(e => e.remove());
-
-    differences.forEach((d,index)=>{
-
-        const left =
-        (d.x1 / largeurReference) * largeurAffichee;
-
-        const top =
-        (d.y1 / hauteurReference) * hauteurAffichee;
-
-        const width =
-        ((d.x2-d.x1)/largeurReference)
-        * largeurAffichee;
-
-        const height =
-        ((d.y2-d.y1)/hauteurReference)
-        * hauteurAffichee;
-
-        const hotspot =
-        document.createElement("div");
-
-        hotspot.className="hotspot";
-
-      const marge = d.marge || 20;
-
-hotspot.style.left=(left-marge)+"px";
-hotspot.style.top=(top-marge)+"px";
-
-hotspot.style.width=
-(width + marge*2)+"px";
-
-hotspot.style.height=
-(height + marge*2)+"px";
-
-        const marker =
-        document.createElement("div");
-
-        marker.className="marker";
-
-        marker.style.left=(left-5)+"px";
-        marker.style.top=(top-5)+"px";
-        marker.style.width=(width+10)+"px";
-        marker.style.height=(height+10)+"px";
-
-        marker.id="marker"+index;
-
-        hotspot.addEventListener("click",()=>{
-
-            if(hotspot.dataset.trouve)
-                return;
-
-            hotspot.dataset.trouve=true;
-
-            marker.style.display="block";
-
-            trouvees++;
-
-            document.getElementById("score")
-            .innerText=
-            trouvees+" / 6 trouvées";
-
-            if(trouvees===6){
-
-                document
-                .getElementById("victory")
-                .style.display="block";
-
-                document
-                .getElementById("hintBtn")
-                .style.display="none";
-
-                document
-                .getElementById("helpBtn")
-                .style.display="none";
-
-               document
-.getElementById("victory")
-.scrollIntoView({
-    behavior:"smooth"
-});
-
-            }
-
-        });
-
-        zoneJeu.appendChild(hotspot);
-        zoneJeu.appendChild(marker);
-
+        zoneJeu.appendChild(d.hotspot);
+        zoneJeu.appendChild(d.marker);
     });
 
+    positionnerZones();
 }
 
-document
-.getElementById("hintBtn")
-.addEventListener("click",()=>{
+/* ============================================================
+   POSITIONNEMENT (rappelé à chaque changement de taille,
+   sans détruire l'état : les différences trouvées restent affichées)
+   ============================================================ */
+function positionnerZones(){
+    const largeur = image.clientWidth;
+    const hauteur = image.clientHeight;
 
-    if(indiceActuel >= indices.length)
-        return;
+    if (!largeur || !hauteur) return;
 
-    document.getElementById("hintText").innerText =
-    indices[indiceActuel];
+    const kx = largeur / CONFIG.LARGEUR_REF;
+    const ky = hauteur / CONFIG.HAUTEUR_REF;
 
-    indiceActuel++;
+    differences.forEach(d => {
+        const left   = d.x1 * kx;
+        const top    = d.y1 * ky;
+        const width  = (d.x2 - d.x1) * kx;
+        const height = (d.y2 - d.y1) * ky;
+        const marge  = d.marge ?? 20;
 
+        Object.assign(d.hotspot.style, {
+            left:   (left - marge) + "px",
+            top:    (top - marge) + "px",
+            width:  (width + marge * 2) + "px",
+            height: (height + marge * 2) + "px"
+        });
+
+        Object.assign(d.marker.style, {
+            left:   (left - 5) + "px",
+            top:    (top - 5) + "px",
+            width:  (width + 10) + "px",
+            height: (height + 10) + "px"
+        });
+    });
+}
+
+/* ============================================================
+   LOGIQUE DU JEU
+   ============================================================ */
+function valider(d){
+    if (d.trouve) return;
+
+    d.trouve = true;
+    d.hotspot.style.pointerEvents = "none";
+    d.marker.classList.remove("aide");
+    d.marker.classList.add("trouve");
+
+    const n = nbTrouvees();
+    scoreEl.textContent = n + " / " + total + " trouvées";
+    hintText.textContent = "";
+
+    if (n === total) victoire();
+}
+
+function victoire(){
+    victoryEl.style.display = "block";
+    hintBtn.style.display = "none";
+    helpBtn.style.display = "none";
+    victoryEl.scrollIntoView({ behavior:"smooth" });
+}
+
+/* Indice : celui de la première différence restante */
+hintBtn.addEventListener("click", () => {
+    const d = premiereRestante();
+    if (d) hintText.textContent = d.indice;
 });
 
-document
-.getElementById("helpBtn")
-.addEventListener("click",()=>{
+/* Aide : montre une zone restante, sans la valider (sauf option) */
+helpBtn.addEventListener("click", () => {
+    const d = premiereRestante();
+    if (!d) return;
 
-    const restants =
-    document.querySelectorAll(".hotspot:not([data-trouve])");
-
-    if(restants.length===0)
+    if (CONFIG.AIDE_VALIDE_LA_DIFFERENCE){
+        valider(d);
         return;
-
-    restants[0].click();
-
-});
-
-window.addEventListener("load",()=>{
-
-    const img =
-    document.getElementById("imageModifiee");
-
-    if(img.complete){
-
-        creerZones();
-
-    }else{
-
-        img.onload=creerZones;
-
     }
 
+    d.marker.classList.add("aide");
+    setTimeout(() => d.marker.classList.remove("aide"), CONFIG.DUREE_AIDE);
 });
 
-window.addEventListener("resize",creerZones);
-function resizeIframe(){
+/* ============================================================
+   CALIBRATION (CONFIG.DEBUG = true)
+   ============================================================ */
+if (CONFIG.DEBUG){
+    const calib = document.getElementById("calibration");
 
-    if(window.parent !== window){
+    zoneJeu.addEventListener("click", e => {
+        const r = image.getBoundingClientRect();
+        const x = Math.round((e.clientX - r.left) / r.width  * CONFIG.LARGEUR_REF);
+        const y = Math.round((e.clientY - r.top)  / r.height * CONFIG.HAUTEUR_REF);
+        calib.textContent = "x: " + x + "   y: " + y;
+    });
+}
 
-        const hauteur =
-        document.documentElement.scrollHeight;
+/* ============================================================
+   INITIALISATION
+   ============================================================ */
+creerZones();
 
-        window.parent.postMessage(
-            {
-                iframeHeight: hauteur
-            },
-            "*"
+// Repositionne dès que l'image change de taille (chargement, resize, rotation)
+new ResizeObserver(positionnerZones).observe(image);
+
+/* ============================================================
+   REDIMENSIONNEMENT DE L'IFRAME (un seul mécanisme)
+   Les deux formats de message sont conservés pour rester
+   compatible avec la page parente, quel que soit celui qu'elle écoute.
+   ============================================================ */
+let envoiPlanifie = false;
+
+function envoyerHauteur(){
+    if (window.parent === window || envoiPlanifie) return;
+
+    envoiPlanifie = true;
+
+    requestAnimationFrame(() => {
+        envoiPlanifie = false;
+
+        const hauteur = Math.max(
+            document.body.scrollHeight,
+            document.documentElement.scrollHeight
         );
 
-    }
-
+        window.parent.postMessage({ iframeHeight: hauteur }, "*");
+        window.parent.postMessage({ type:"resize-game", height: hauteur }, "*");
+    });
 }
 
-window.addEventListener(
-    "load",
-    resizeIframe
-);
-
-window.addEventListener(
-    "resize",
-    resizeIframe
-);
+window.addEventListener("load", envoyerHauteur);
+new ResizeObserver(envoyerHauteur).observe(document.body);
 </script>
-<script>
 
-function hauteurIframe() {
-
-    const hauteur = Math.max(
-        document.body.scrollHeight,
-        document.documentElement.scrollHeight
-    );
-
-    if(window.parent !== window){
-
-        window.parent.postMessage(
-            {
-                type: "resize-game",
-                height: hauteur
-            },
-            "*"
-        );
-
-    }
-
-}
-
-window.addEventListener("load", hauteurIframe);
-window.addEventListener("resize", hauteurIframe);
-
-const observer =
-new MutationObserver(hauteurIframe);
-
-observer.observe(
-    document.body,
-    {
-        childList:true,
-        subtree:true,
-        attributes:true
-    }
-);
-const calib = document.createElement("div");
-calib.style.cssText = "position:fixed;bottom:10px;left:10px;background:#000;color:#fff;padding:8px 12px;border-radius:6px;font-size:14px;z-index:9999";
-document.body.appendChild(calib);
-
-zoneJeu.addEventListener("click", e => {
-    const img = document.getElementById("imageModifiee");
-    const r = img.getBoundingClientRect();
-    const x = Math.round((e.clientX - r.left) / r.width * largeurReference);
-    const y = Math.round((e.clientY - r.top) / r.height * hauteurReference);
-    calib.textContent = "x: " + x + "  y: " + y;
-});
-</script>
 </body>
 </html>
