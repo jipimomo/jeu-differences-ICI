@@ -474,6 +474,15 @@ function envoyerHauteur(){
 window.addEventListener("load", envoyerHauteur);
 new ResizeObserver(envoyerHauteur).observe(document.body);
 </script>
+<script>
+window.addEventListener("message", e => {
+    // idéalement, vérifiez aussi e.origin
+    const h = e.data && (e.data.iframeHeight ||
+             (e.data.type === "resize-game" && e.data.height));
+    if (!h) return;
+    document.getElementById("monIframe").style.height = h + "px";
+});
+</script>
 
 </body>
 </html>
